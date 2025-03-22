@@ -1,34 +1,21 @@
 class CommandParser {
     function ParsedCommand parse(String line) {
         var String commandName, buffer;
-        var Array args;
-        var int i, spacesCount, argsCount;
+        var List args;
+        var int i;
         var char currentChar;
 
-        let i = 0;
-        let spacesCount = 0;
-        while (i < line.length()) {
-            if (line.charAt(i) = 32) {
-                let spacesCount = spacesCount + 1;
-            }
-            let i = i + 1;
-        }
-
         let buffer = String.new(16);
-        if (spacesCount > 0) {
-            let args = Array.new(spacesCount);
-        }
+        let args = List.new(4);
 
         let i = 0;
-        let argsCount = 0;
         while (i < line.length()) {
             let currentChar = line.charAt(i);
             if (currentChar = 32) {
                 if (commandName = null) {
                     let commandName = buffer;
                 } else {
-                    let args[argsCount] = buffer;
-                    let argsCount = argsCount + 1;
+                    do args.add(buffer);
                 }
                 let buffer = String.new(16);
             } else {
@@ -40,10 +27,9 @@ class CommandParser {
         if (commandName = null) {
             let commandName = buffer;
         } else {
-            let args[argsCount] = buffer;
-            let argsCount = argsCount + 1;
+            do args.add(buffer);
         }
 
-        return ParsedCommand.new(commandName, argsCount, args);
+        return ParsedCommand.new(commandName, args);
     }
 }

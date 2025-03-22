@@ -1,11 +1,9 @@
 class ParsedCommand {
     field String name;
-    field int argumentsCount;
-    field Array arguments;
+    field List arguments;
 
-    constructor ParsedCommand new(String nameArg, int argumentsCountArg, Array argumentsArg) {
+    constructor ParsedCommand new(String nameArg, List argumentsArg) {
         let name = nameArg;
-        let argumentsCount = argumentsCountArg;
         let arguments = argumentsArg;
         return this;
     }
@@ -15,8 +13,8 @@ class ParsedCommand {
         var String argument;
 
         let i = 0;
-        while (i < argumentsCount) {
-            let argument = arguments[i];
+        while (i < arguments.getSize()) {
+            let argument = arguments.elementAt(i);
             do argument.dispose();
             let i = i + 1;
         }
@@ -33,10 +31,10 @@ class ParsedCommand {
     }
 
     method int getArgumentsCount() {
-        return argumentsCount;
+        return arguments.getSize();
     }
 
     method String argumentAt(int i) {
-        return arguments[i];
+        return arguments.elementAt(i);
     }
 }

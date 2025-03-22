@@ -1,28 +1,21 @@
 class File {
     field String name;
-    field int contentMaxSize;
-    field int contentSize;
-    field Array content;
+    field List content;
     field Directory parent;
 
     constructor File new(String nameArg, Directory parentArg) {
         let name = nameArg;
-        let contentMaxSize = 20;
-        let contentSize = 0;
-        let content = Array.new(contentMaxSize);
+        let content = List.new(4);
         let parent = parentArg;
         return this;
     }
 
     method void dispose() {
         var String line;
-        var int i;
 
-        let i = 0;
-        while (i < contentSize) {
-            let line = content[i];
+        while (content.getSize() > 0) {
+            let line = content.remove();
             do line.dispose();
-            let i = i + 1;
         }
 
         do content.dispose();
@@ -36,10 +29,10 @@ class File {
     }
 
     method int getContentSize() {
-        return contentSize;
+        return content.getSize();
     }
 
     method String lineAt(int i) {
-        return content[i];
+        return content.elementAt(i);
     }
 }

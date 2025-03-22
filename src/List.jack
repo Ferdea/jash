@@ -1,0 +1,103 @@
+class List {
+    field int size;
+    field int capacity;
+    field Array array;
+
+    constructor List new(int capacityArg) {
+        let size = 0;
+        let capacity = capacityArg;
+        let array = Array.new(capacity);
+        return this;
+    }
+
+    method void dispose() {
+        do Memory.deAlloc(this);
+        return;
+    }
+
+    method int getSize() {
+        return size;
+    }
+
+    method void add(int value) {
+        do set(size, value);
+        return;
+    }
+
+    method void set(int i, int value) {
+        var int j;
+
+        if (size = capacity) {
+            do resize(2 * capacity);
+        }
+
+        if ((i < 0) | (i > size)) {
+            do Sys.error(26);
+        }
+
+        let j = size;
+        while (j > i) {
+            let array[j] = array[j - 1];
+            let j = j - 1; 
+        }
+        let array[i] = value;
+        let size = size + 1;
+
+        return;
+    }
+
+    method int elementAt(int i) {
+        if ((i < 0) | (~(i < size))) {
+            do Sys.error(28);
+        }
+
+        return array[i];
+    }
+
+    method int remove() {
+        return removeAt(size - 1);
+    }
+
+    method int removeAt(int i) {
+        var int value;
+
+        if ((i < 0) | (~(i < size))) {
+            do Sys.error(29);
+        }
+
+        let value = array[i];
+        let size = size - 1;
+        while (i < size) {
+            let array[i] = array[i + 1];
+            let i = i + 1;
+        }
+
+        if (size < (capacity / 3)) {
+            do resize((2 * capacity) / 3);
+        }
+
+        return value;
+    }
+
+    method void resize(int newCapacity) {
+        var Array newArray;
+        var int i;
+
+        if (newCapacity < size) {
+            do Sys.error(27);
+        }
+
+        let newArray = Array.new(newCapacity);
+        let i = 0;
+        while (i < size) {
+            let newArray[i] = array[i];
+            let i = i + 1;
+        }
+
+        do array.dispose();
+        let array = newArray;
+        let capacity = newCapacity;
+
+        return;
+    }
+}

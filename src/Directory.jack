@@ -3,12 +3,8 @@ class Directory {
     static String tooManyFilesMessage;
 
     field String name;
-    field int directoriesMaxSize;
-    field int directoriesSize;
-    field Array directories;
-    field int filesMaxSize;
-    field int filesSize;
-    field Array files;
+    field List directories;
+    field List files;
     field Directory parent;
 
     function void init() {
@@ -19,12 +15,8 @@ class Directory {
 
     constructor Directory new(String nameArg, Directory parentArg) {
         let name = nameArg;
-        let directoriesMaxSize = 10;
-        let directoriesSize = 0;
-        let directories = Array.new(directoriesMaxSize);
-        let filesMaxSize = 10;
-        let filesSize = 0;
-        let files = Array.new(filesMaxSize);
+        let directories = List.new(4);
+        let files = List.new(4);
         let parent = parentArg;
         return this;
     }
@@ -32,20 +24,15 @@ class Directory {
     method void dispose() {
         var Directory directory;
         var File file;
-        var int i;
 
-        let i = 0;
-        while (i < directoriesSize) {
-            let directory = directories[i];
+        while (directories.getSize() > 0) {
+            let directory = directories.remove();
             do directory.dispose();
-            let i = i + 1;
         }
 
-        let i = 0;
-        while (i < filesSize) {
-            let file = files[i];
+        while (files.getSize() > 0) {
+            let file = files.remove();
             do file.dispose();
-            let i = i + 1;
         }
 
         do directories.dispose();
@@ -59,86 +46,42 @@ class Directory {
     }
 
     method int getDirectoriesCount() {
-        return directoriesSize;
+        return directories.getSize();
     }
 
     method Directory directoryAt(int i) {
-        if ((i < 0) | (~(i < directoriesSize))) {
-            do Sys.error(21);
-        }
-
-        return directories[i];
+        return directories.elementAt(i);
     }
 
     method int getFilesCount() {
-        return filesSize;
+        return files.getSize();
     }
 
     method File fileAt(int i) {
-        if ((i < 0) | (~(i < filesSize))) {
-            do Sys.error(22);
-        }
-
-        return files[i];
+        return files.elementAt(i);
     }
 
     method void pushDirectory(Directory directory) {
-        if ((directoriesSize + 1) = directoriesMaxSize) {
-            do Output.printString(tooManyDirectoriesMessage);
-            return;
-        }
-
-        let directories[directoriesSize] = directory;
-        let directoriesSize = directoriesSize + 1;
+        do directories.add(directory);
         return;
     }
 
     method void removeDirectory(int i) {
         var Directory directory;
-        
-        if ((i < 0) | (~(i < directoriesSize))) {
-            do Sys.error(24);
-            return;
-        }
-
-        let directory = directories[i];
+        let directory = directories.removeAt(i);
         do directory.dispose();
-
-        let directoriesSize = directoriesSize - 1;
-        while (i < directoriesSize) {
-            let directories[i] = directories[i + 1];
-            let i = i + 1;
-        }
         return;
     }
 
     method void pushFile(File file) {
-        if ((filesSize + 1) = filesMaxSize) {
-            do Output.printString(tooManyFilesMessage);
-            return;
-        }
-
-        let files[filesSize] = file;
-        let filesSize = filesSize + 1;
+        do files.add(file);
         return;
     }
 
     method void removeFile(int i) {
         var File file;
-        
-        if ((i < 0) | (~(i < filesSize))) {
-            do Sys.error(25);
-            return;
-        }
-
-        let file = files[i];
+        let file = files.removeAt(i);
         do file.dispose();
-
-        let filesSize = filesSize - 1;
-        while (i < filesSize) {
-            let files[i] = files[i + 1];
-            let i = i + 1;
-        }
         return;
     }
 
