@@ -1,6 +1,11 @@
 class Main {
     function void main() {
-        do Output.printString("A");
+        var Jash jash;
+        do Jash.init();
+        do Directory.init();
+        let jash = Jash.new();
+        do jash.run();
+        do jash.dispose();
         return;
     }
 }

@@ -1,0 +1,19 @@
+class StringComparer {
+    function bool compare(String left, String right) {
+        var int i;
+        
+        if (~(left.length() = right.length())) {
+            return false;
+        }
+
+        let i = 0;
+        while (i < left.length()) {
+            if (~(left.charAt(i) = right.charAt(i))) {
+                return false;
+            }
+            let i = i + 1;
+        }
+
+        return true;
+    }
+}

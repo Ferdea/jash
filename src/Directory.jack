@@ -1,0 +1,114 @@
+class Directory {
+    static String tooManyDirectoriesMessage;
+    static String tooManyFilesMessage;
+
+    field String name;
+    field int directoriesMaxSize;
+    field int directoriesSize;
+    field Array directories;
+    field int filesMaxSize;
+    field int filesSize;
+    field Array files;
+    field Directory parent;
+
+    function void init() {
+        let tooManyDirectoriesMessage = "TOO MANY DIRECTORIES";
+        let tooManyFilesMessage = "TOO MANY FILES";
+        return;
+    }
+
+    constructor Directory new(String nameArg, Directory parentArg) {
+        let name = nameArg;
+        let directoriesMaxSize = 10;
+        let directoriesSize = 0;
+        let directories = Array.new(directoriesMaxSize);
+        let filesMaxSize = 10;
+        let filesSize = 0;
+        let files = Array.new(filesMaxSize);
+        let parent = parentArg;
+        return this;
+    }
+
+    method void dispose() {
+        var Directory directory;
+        var File file;
+        var int i;
+
+        let i = 0;
+        while (i < directoriesSize) {
+            let directory = directories[i];
+            do directory.dispose();
+            let i = i + 1;
+        }
+
+        let i = 0;
+        while (i < filesSize) {
+            let file = files[i];
+            do file.dispose();
+            let i = i + 1;
+        }
+
+        do directories.dispose();
+        do files.dispose();
+        do Memory.deAlloc(this);
+        return;
+    }
+
+    method String getName() {
+        return name;
+    }
+
+    method int getDirectoriesCount() {
+        return directoriesSize;
+    }
+
+    method Directory directoryAt(int i) {
+        if ((i < 0) | (~(i < directoriesSize))) {
+            do Sys.error(21);
+        }
+
+        return directories[i];
+    }
+
+    method int getFilesCount() {
+        return filesSize;
+    }
+
+    method File fileAt(int i) {
+        if ((i < 0) | (~(i < filesSize))) {
+            do Sys.error(22);
+        }
+
+        return files[i];
+    }
+
+    method void pushDirectory(Directory directory) {
+        if ((directoriesSize + 1) = directoriesMaxSize) {
+            do Output.printString(tooManyDirectoriesMessage);
+            return;
+        }
+
+        let directories[directoriesSize] = directory;
+        let directoriesSize = directoriesSize + 1;
+        return;
+    }
+
+    method void pushFile(File file) {
+        if ((filesSize + 1) = filesMaxSize) {
+            do Output.printString(tooManyFilesMessage);
+            return;
+        }
+
+        let files[filesSize] = file;
+        let filesSize = filesSize + 1;
+        return;
+    }
+
+    method bool haveParent() {
+        return ~(parent = null);
+    }
+
+    method Directory getParent() {
+        return parent;
+    }
+}

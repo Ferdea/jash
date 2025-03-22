@@ -1,0 +1,37 @@
+class File {
+    field String name;
+    field int contentMaxSize;
+    field int contentSize;
+    field Array content;
+    field Directory parent;
+
+    constructor File new(String nameArg, Directory parentArg) {
+        let name = nameArg;
+        let contentMaxSize = 20;
+        let contentSize = 0;
+        let content = Array.new(contentMaxSize);
+        let parent = parentArg;
+        return this;
+    }
+
+    method void dispose() {
+        var String line;
+        var int i;
+
+        let i = 0;
+        while (i < contentSize) {
+            let line = content[i];
+            do line.dispose();
+            let i = i + 1;
+        }
+
+        do content.dispose();
+        do name.dispose();
+        do Memory.deAlloc(this);
+        return;
+    }
+
+    method String getName() {
+        return name;
+    }
+}
