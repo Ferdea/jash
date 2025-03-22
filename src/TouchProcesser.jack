@@ -21,7 +21,7 @@ class TouchProcesser {
         return true;
     }
 
-    function void process(JashState state, String fileName) {
+    function ContentBuffer process(JashState state, String fileName) {
         var Directory currentDirectory;
         var File newFile;
 
@@ -33,6 +33,6 @@ class TouchProcesser {
         let currentDirectory = state.getCurrentDirectory();
         let newFile = File.new(fileName, currentDirectory);
         do currentDirectory.pushFile(newFile);
-        return;
+        return ContentBuffer.new();
     }
 }

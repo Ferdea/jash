@@ -21,11 +21,19 @@ class Jash {
 
     method void run() {
         var String command;
+        var ContentBuffer content;
 
         while (true) {
             let command = readCommand();
-            do processCommand(command);
+            let content = processCommand(command);
             do command.dispose();
+
+            if (content = null) {
+                do JashErrors.incorrectCommand();
+            } else {
+                do printContent(content);
+                do content.dispose();
+            }
         }
 
         return;
@@ -45,45 +53,51 @@ class Jash {
         return command;
     }
 
-    method void processCommand(String line) {
+    method ContentBuffer processCommand(String line) {
         var ParsedCommand command;
 
         let command = CommandParser.parse(line);
 
         if (LsProcesser.isLs(command)) {
-            do LsProcesser.process(state);
-            return;
+            return LsProcesser.process(state);
         }
         if (MkdirProcesser.isMkdir(command)) {
-            do MkdirProcesser.process(state, command.argumentAt(0));
-            return;
+            return MkdirProcesser.process(state, command.argumentAt(0));
         }
         if (CdProcesser.isCd(command)) {
-            do CdProcesser.process(state, command.argumentAt(0));
-            return;
+            return CdProcesser.process(state, command.argumentAt(0));
         }
         if (RmProcesser.isRm(command)) {
-            do RmProcesser.process(state, command.argumentAt(0));
-            return;
+            return RmProcesser.process(state, command.argumentAt(0));
         }
         if (TouchProcesser.isTouch(command)) {
-            do TouchProcesser.process(state, command.argumentAt(0));
-            return;
+            return TouchProcesser.process(state, command.argumentAt(0));
         }
         if (ClearProcesser.isClear(command)) {
-            do ClearProcesser.process();
-            return;
+            return ClearProcesser.process();
         }
         if (CatProcesser.isCat(command)) {
-            do CatProcesser.process(state, command.argumentAt(0));
-            return;
+            return CatProcesser.process(state, command.argumentAt(0));
         }
         if (EchoProcesser.isEcho(command)) {
-            do EchoProcesser.process(command.argumentAt(0));
-            return;
+            return EchoProcesser.process(command.argumentAt(0));
         }
 
-        do JashErrors.incorrectCommand();
+        return null;
+    }
+
+    method void printContent(ContentBuffer content) {
+        var String line;
+        var int i;
+
+        let i = 0;
+        while (i < content.getSize()) {
+            let line = content.lineAt(i);
+            do Output.printString(line);
+            do Output.println();
+            let i = i + 1;
+        }
+
         return;
     }
 }

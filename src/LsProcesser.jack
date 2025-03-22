@@ -21,9 +21,11 @@ class LsProcesser {
         return true;
     }
 
-    function void process(JashState state) {
+    function ContentBuffer process(JashState state) {
         var int i, count, allCount;
         var Directory directory, currentDirectory;
+        var ContentBuffer result;
+        var StringBuilder builder;
         var File file;
 
         let currentDirectory = state.getCurrentDirectory();
@@ -31,16 +33,20 @@ class LsProcesser {
         if (allCount = 0) {
             do Output.printString(directoryEmptyMessage);
             do Output.println();
-            return;
+            let result = ContentBuffer.new();
+            return result;
         }
 
+        let result = ContentBuffer.new();
+        let builder = StringBuilder.new(4);
         let count = currentDirectory.getDirectoriesCount();
         let i = 0;
         while (i < count) {
             let directory = currentDirectory.directoryAt(i);
-            do Output.printString(directory.getName());
-            do Output.printChar(47);
-            do Output.println();
+            do builder.addString(directory.getName());
+            do builder.add(47);
+            do result.add(builder.build());
+            do builder.clear();
             let i = i + 1;
         }
 
@@ -48,11 +54,13 @@ class LsProcesser {
         let i = 0;
         while (i < count) {
             let file = currentDirectory.fileAt(i);
-            do Output.printString(file.getName());
-            do Output.println();
+            do builder.addString(file.getName());
+            do result.add(builder.build());
+            do builder.clear();
             let i = i + 1;
         }
 
-        return;
+        do builder.dispose();
+        return result;
     }
 }

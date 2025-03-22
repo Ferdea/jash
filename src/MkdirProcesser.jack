@@ -21,17 +21,18 @@ class MkdirProcesser {
         return true;
     }
 
-    function void process(JashState state, String directoryName) {
+    function ContentBuffer process(JashState state, String directoryName) {
         var Directory newDirectory, currentDirectory;
 
         if (directoryName.length() = 0) {
             do Output.printString(directoryNameIsEmptyMessage);
             do Output.println();
+            return ContentBuffer.new();
         }
 
         let currentDirectory = state.getCurrentDirectory();
         let newDirectory = Directory.new(directoryName, currentDirectory);
         do currentDirectory.pushDirectory(newDirectory);
-        return;
+        return ContentBuffer.new();
     }
 }

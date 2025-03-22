@@ -19,9 +19,9 @@ class ClearProcesser {
         return true;
     }
 
-    function void process() {
+    function ContentBuffer process() {
         do Screen.clearScreen();
         do Output.moveCursor(0, 0);
-        return;
+        return ContentBuffer.new();
     }
 }

@@ -1,11 +1,12 @@
 class CommandParser {
     function ParsedCommand parse(String line) {
-        var String commandName, buffer;
+        var String commandName;
+        var StringBuilder builder;
         var List args;
         var int i;
         var char currentChar;
 
-        let buffer = String.new(16);
+        let builder = StringBuilder.new(4);
         let args = List.new(4);
 
         let i = 0;
@@ -13,23 +14,24 @@ class CommandParser {
             let currentChar = line.charAt(i);
             if (currentChar = 32) {
                 if (commandName = null) {
-                    let commandName = buffer;
+                    let commandName = builder.build();
                 } else {
-                    do args.add(buffer);
+                    do args.add(builder.build());
                 }
-                let buffer = String.new(16);
+                do builder.clear();
             } else {
-                let buffer = buffer.appendChar(currentChar);
+                do builder.add(currentChar);
             }
             let i = i + 1;
         }
 
         if (commandName = null) {
-            let commandName = buffer;
+            let commandName = builder.build();
         } else {
-            do args.add(buffer);
+            do args.add(builder.build());
         }
 
+        do builder.dispose();
         return ParsedCommand.new(commandName, args);
     }
 }

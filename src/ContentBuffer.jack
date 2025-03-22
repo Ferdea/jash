@@ -1,0 +1,33 @@
+class ContentBuffer {
+    field List content;
+
+    constructor ContentBuffer new() {
+        let content = List.new(4);
+        return this;
+    }
+
+    method void dispose() {
+        var String line;
+
+        while (content.getSize() > 0) {
+            let line = content.remove();
+            do content.dispose();
+        }
+        do content.dispose();
+        do Memory.deAlloc(this);
+        return;
+    }
+
+    method int getSize() {
+        return content.getSize();
+    }
+
+    method String lineAt(int i) {
+        return content.elementAt(i);
+    }
+
+    method void add(String line) {
+        do content.add(line);
+        return;
+    }
+}

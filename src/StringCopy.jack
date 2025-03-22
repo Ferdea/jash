@@ -1,0 +1,12 @@
+class StringCopy {
+    function String copy(String source) {
+        var StringBuilder builder;
+        var String result;
+
+        let builder = StringBuilder.fromString(source);
+        let result = builder.build();
+        do builder.dispose();
+
+        return result;
+    }
+}

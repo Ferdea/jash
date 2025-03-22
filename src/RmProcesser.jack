@@ -21,18 +21,18 @@ class RmProcesser {
         return true;
     }
 
-    function void process(JashState state, String name) {
+    function ContentBuffer process(JashState state, String name) {
         if (RmProcesser.processFile(state, name)) {
-            return;
+            return ContentBuffer.new();
         }
 
         if (RmProcesser.processDirectory(state, name)) {
-            return;
+            return ContentBuffer.new();
         }
 
         do Output.printString(notFoundFileOrDirectoryMessage);
         do Output.println();
-        return;
+        return ContentBuffer.new();
     }
 
     function bool processDirectory(JashState state, String name) {

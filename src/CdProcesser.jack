@@ -25,14 +25,14 @@ class CdProcesser {
         return true;
     }
 
-    function void process(JashState state, String directoryName) {
+    function ContentBuffer process(JashState state, String directoryName) {
         var int i, count;
         var Directory directory, currentDirectory;
         var bool isFound;
 
         if (StringComparer.compare(rootDirectoryArgumentValue, directoryName)) {
             do state.setCurrentDirectory(state.getRootDirectory());
-            return;
+            return ContentBuffer.new();
         }
 
         let currentDirectory = state.getCurrentDirectory();
@@ -41,7 +41,7 @@ class CdProcesser {
                 do state.setCurrentDirectory(currentDirectory.getParent());
             }
 
-            return;
+            return ContentBuffer.new();
         }
 
         let isFound = false;
@@ -60,10 +60,10 @@ class CdProcesser {
         if (~isFound) {
             do Output.printString(notFoundDirectoryMessage);
             do Output.println();
-            return;
+            return ContentBuffer.new();
         }
         
         do state.setCurrentDirectory(directory);
-        return;
+        return ContentBuffer.new();
     }
 }

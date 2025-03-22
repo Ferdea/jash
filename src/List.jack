@@ -11,6 +11,7 @@ class List {
     }
 
     method void dispose() {
+        do array.dispose();
         do Memory.deAlloc(this);
         return;
     }
@@ -77,6 +78,11 @@ class List {
         }
 
         return value;
+    }
+
+    method void clear() {
+        let size = 0;
+        return;
     }
 
     method void resize(int newCapacity) {

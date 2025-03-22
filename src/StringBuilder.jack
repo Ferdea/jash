@@ -1,0 +1,57 @@
+class StringBuilder {
+    field List chars;
+
+    constructor StringBuilder new(int capacity) {
+        let chars = List.new(capacity);
+        return this;
+    }
+
+    function StringBuilder fromString(String initial) {
+        var StringBuilder builder;
+
+        let builder = StringBuilder.new(2 * initial.length());
+        do builder.addString(initial);
+
+        return builder;
+    }
+
+    method void dispose() {
+        do chars.dispose();
+        do Memory.deAlloc(this);
+        return;
+    }
+
+    method void add(char c) {
+        do chars.add(c);
+        return;
+    }
+
+    method void addString(String line) {
+        var int i;
+        let i = 0;
+        while (i < line.length()) {
+            do chars.add(line.charAt(i));
+            let i = i + 1;
+        }
+        return;
+    }
+
+    method String build() {
+        var String result;
+        var int i;
+
+        let result = String.new(chars.getSize());
+        let i = 0;
+        while (i < chars.getSize()) {
+            let result = result.appendChar(chars.elementAt(i));
+            let i = i + 1;
+        }
+
+        return result;
+    }
+
+    method void clear() {
+        do chars.clear();
+        return;
+    }
+}

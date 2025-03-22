@@ -19,9 +19,10 @@ class EchoProcesser {
         return true;
     }
 
-    function void process(String line) {
-        do Output.printString(line);
-        do Output.println();
-        return;
+    function ContentBuffer process(String line) {
+        var ContentBuffer result;
+        let result = ContentBuffer.new();
+        do result.add(String.copy(line));
+        return result;
     }
 }
