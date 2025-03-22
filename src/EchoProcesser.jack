@@ -1,0 +1,27 @@
+class EchoProcesser {
+    static String echoCommand;
+
+    function void init() {
+        let echoCommand = "ECHO";
+        return;
+    }
+
+    function bool isEcho(ParsedCommand command) {
+        if (~(StringComparer.compare(echoCommand, command.getName()))) {
+            return false;
+        }
+
+        if (~(command.getArgumentsCount() = 1)) {
+            do JashErrors.incorrectArgumentsCount();
+            return false;
+        }
+
+        return true;
+    }
+
+    function void process(String line) {
+        do Output.printString(line);
+        do Output.println();
+        return;
+    }
+}

@@ -1,0 +1,69 @@
+class CdProcesser {
+    static String cdCommand;
+    static String parentDirectoryArgumentValue;
+    static String rootDirectoryArgumentValue;
+    static String notFoundDirectoryMessage;
+
+    function void init() {
+        let cdCommand = "CD";
+        let parentDirectoryArgumentValue = "..";
+        let rootDirectoryArgumentValue = "~";
+        let notFoundDirectoryMessage = "DIRECTORY NOT FOUND";
+        return;
+    }
+
+    function bool isCd(ParsedCommand command) {
+        if (~(StringComparer.compare(cdCommand, command.getName()))) {
+            return false;
+        }
+
+        if (~(command.getArgumentsCount() = 1)) {
+            do JashErrors.incorrectArgumentsCount();
+            return false;
+        }
+
+        return true;
+    }
+
+    function void process(JashState state, String directoryName) {
+        var int i, count;
+        var Directory directory, currentDirectory;
+        var bool isFound;
+
+        if (StringComparer.compare(rootDirectoryArgumentValue, directoryName)) {
+            do state.setCurrentDirectory(state.getRootDirectory());
+            return;
+        }
+
+        let currentDirectory = state.getCurrentDirectory();
+        if (StringComparer.compare(parentDirectoryArgumentValue, directoryName)) {
+            if (currentDirectory.haveParent()) {
+                do state.setCurrentDirectory(currentDirectory.getParent());
+            }
+
+            return;
+        }
+
+        let isFound = false;
+        let count = currentDirectory.getDirectoriesCount();
+        let i = 0;
+        while ((i < count) & (~(isFound))) {
+            let directory = currentDirectory.directoryAt(i);
+
+            if (StringComparer.compare(directory.getName(), directoryName)) {
+                let isFound = true;
+            }
+
+            let i = i + 1;
+        }
+
+        if (~isFound) {
+            do Output.printString(notFoundDirectoryMessage);
+            do Output.println();
+            return;
+        }
+        
+        do state.setCurrentDirectory(directory);
+        return;
+    }
+}

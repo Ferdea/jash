@@ -1,0 +1,42 @@
+class ParsedCommand {
+    field String name;
+    field int argumentsCount;
+    field Array arguments;
+
+    constructor ParsedCommand new(String nameArg, int argumentsCountArg, Array argumentsArg) {
+        let name = nameArg;
+        let argumentsCount = argumentsCountArg;
+        let arguments = argumentsArg;
+        return this;
+    }
+
+    method void dispose() {
+        var int i;
+        var String argument;
+
+        let i = 0;
+        while (i < argumentsCount) {
+            let argument = arguments[i];
+            do argument.dispose();
+            let i = i + 1;
+        }
+
+        do name.dispose();
+        do arguments.dispose();
+        do Memory.deAlloc(this);
+
+        return;
+    }
+
+    method String getName() {
+        return name;
+    }
+
+    method int getArgumentsCount() {
+        return argumentsCount;
+    }
+
+    method String argumentAt(int i) {
+        return arguments[i];
+    }
+}

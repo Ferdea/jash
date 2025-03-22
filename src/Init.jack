@@ -1,0 +1,16 @@
+class Init {
+    function void init() {
+        do JashErrors.init();
+        do Jash.init();
+        do Directory.init();
+        do LsProcesser.init();
+        do MkdirProcesser.init();
+        do CdProcesser.init();
+        do RmProcesser.init();
+        do TouchProcesser.init();
+        do ClearProcesser.init();
+        do CatProcesser.init();
+        do EchoProcesser.init();
+        return;
+    }
+}

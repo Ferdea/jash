@@ -1,52 +1,20 @@
 class Jash {
     static String commandReadMessage;
 
-    static String lsCommand;
-    static String directoryEmptyMessage;
-
-    static String mkdirCommand;
-    static String directoryNameIsEmptyMessage;
-
-    static String cdCommand;
-    static String parentDirectoryArgumentValue;
-    static String rootDirectoryArgumentValue;
-    static String notFoundDirectoryMessage;
-
-    static String incorrectCommandMessage;
-    static String incorrectArgumentsCountMessage;
-
-    field Directory rootDirectory;
-    field Directory currentDirectory;
+    field JashState state;
 
     function void init() {
         let commandReadMessage = " > ";
-
-        let lsCommand = "LS";
-        let directoryEmptyMessage = "DIRECTORY IS EMPTY";
-
-        let mkdirCommand = "MKDIR";
-        let directoryNameIsEmptyMessage = "DIRECTORY NAME IS EMPTY";
-
-        let cdCommand = "CD";
-        let parentDirectoryArgumentValue = "..";
-        let rootDirectoryArgumentValue = "~";
-        let notFoundDirectoryMessage = "DIRECTORY NOT FOUND";
-
-        let incorrectCommandMessage = "INCORRECT COMMAND";
-        let incorrectArgumentsCountMessage = "INCORRECT ARGUMENTS COUNT";
-
         return;
     }
 
     constructor Jash new() {
-        let rootDirectory = Directory.new("~", null);
-        let currentDirectory = rootDirectory;
+        let state = JashState.new();
         return this;
     }
 
     method void dispose() {
-        do path.dispose();
-        do rootDirectory.dispose();
+        do state.dispose();
         do Memory.deAlloc(this);
         return;
     }
@@ -64,180 +32,58 @@ class Jash {
     }
 
     method String readCommand() {
-        var String command;
+        var String command, path;
+        var Directory currentDirectory;
 
-        do Output.printString(currentDirectory.getName());
+        let currentDirectory = state.getCurrentDirectory();
+        let path = currentDirectory.getPath();
+        do Output.printString(path);
+        do path.dispose();
+
         let command = Keyboard.readLine(commandReadMessage);
 
         return command;
     }
 
-    method void processCommand(String command) {
-        var String commandName, buffer;
-        var Array args;
-        var int i, spacesCount, argsCount;
-        var char currentChar;
+    method void processCommand(String line) {
+        var ParsedCommand command;
 
-        let i = 0;
-        let spacesCount = 0;
-        while (i < command.length()) {
-            if (command.charAt(i) = 32) {
-                let spacesCount = spacesCount + 1;
-            }
-            let i = i + 1;
-        }
+        let command = CommandParser.parse(line);
 
-        let buffer = String.new(16);
-        if (spacesCount > 0) {
-            let args = Array.new(spacesCount);
-        }
-
-        let i = 0;
-        let argsCount = 0;
-        while (i < command.length()) {
-            let currentChar = command.charAt(i);
-            if (currentChar = 32) {
-                if (commandName = null) {
-                    let commandName = buffer;
-                } else {
-                    let args[argsCount] = buffer;
-                    let argsCount = argsCount + 1;
-                }
-                let buffer = String.new(16);
-            } else {
-                let buffer = buffer.appendChar(currentChar);
-            }
-            let i = i + 1;
-        }
-
-        if (commandName = null) {
-            let commandName = buffer;
-        } else {
-            let args[argsCount] = buffer;
-            let argsCount = argsCount + 1;
-        }
-
-        if (StringComparer.compare(lsCommand, commandName)) {
-            if (~(argsCount = 0)) {
-                do Output.printString(incorrectArgumentsCountMessage);
-                do Output.println();
-                return;
-            }
-
-            do processLs();
+        if (LsProcesser.isLs(command)) {
+            do LsProcesser.process(state);
             return;
         }
-        if (StringComparer.compare(mkdirCommand, commandName)) {
-            if (~(argsCount = 1)) {
-                do Output.printString(incorrectArgumentsCountMessage);
-                do Output.println();
-                return;
-            }
-
-            do processMkdir(args[0]);
+        if (MkdirProcesser.isMkdir(command)) {
+            do MkdirProcesser.process(state, command.argumentAt(0));
             return;
         }
-        if (StringComparer.compare(cdCommand, commandName)) {
-            if (~(argsCount = 1)) {
-                do Output.printString(incorrectArgumentsCountMessage);
-                do Output.println();
-                return;
-            }
-
-            do processCd(args[0]);
+        if (CdProcesser.isCd(command)) {
+            do CdProcesser.process(state, command.argumentAt(0));
+            return;
+        }
+        if (RmProcesser.isRm(command)) {
+            do RmProcesser.process(state, command.argumentAt(0));
+            return;
+        }
+        if (TouchProcesser.isTouch(command)) {
+            do TouchProcesser.process(state, command.argumentAt(0));
+            return;
+        }
+        if (ClearProcesser.isClear(command)) {
+            do ClearProcesser.process();
+            return;
+        }
+        if (CatProcesser.isCat(command)) {
+            do CatProcesser.process(state, command.argumentAt(0));
+            return;
+        }
+        if (EchoProcesser.isEcho(command)) {
+            do EchoProcesser.process(command.argumentAt(0));
             return;
         }
 
-        do Output.printString(incorrectCommandMessage);
-        do Output.println();
-        return;
-    }
-
-    method void processLs() {
-        var int i, count, allCount;
-        var Directory directory;
-        var File file;
-
-        let allCount = currentDirectory.getDirectoriesCount() + currentDirectory.getFilesCount();
-        if (allCount = 0) {
-            do Output.printString(directoryEmptyMessage);
-            do Output.println();
-            return;
-        }
-
-        let count = currentDirectory.getDirectoriesCount();
-        let i = 0;
-        while (i < count) {
-            let directory = currentDirectory.directoryAt(i);
-            do Output.printString(directory.getName());
-            do Output.printChar(47);
-            do Output.println();
-            let i = i + 1;
-        }
-
-        let count = currentDirectory.getFilesCount();
-        let i = 0;
-        while (i < count) {
-            let file = currentDirectory.fileAt(i);
-            do Output.printString(file.getName());
-            do Output.println();
-            let i = i + 1;
-        }
-
-        return;
-    }
-
-    method void processMkdir(String directoryName) {
-        var Directory newDirectory;
-
-        if (directoryName.length() = 0) {
-            do Output.printString(directoryNameIsEmptyMessage);
-            do Output.println();
-        }
-
-        let newDirectory = Directory.new(directoryName, currentDirectory);
-        do currentDirectory.pushDirectory(newDirectory);
-        return;
-    }
-
-    method void processCd(String directoryName) {
-        var int i, count;
-        var Directory directory;
-        var bool isFound;
-
-        if (StringComparer.compare(rootDirectoryArgumentValue, directoryName)) {
-            let currentDirectory = rootDirectory;
-            return;
-        }
-
-        if (StringComparer.compare(parentDirectoryArgumentValue, directoryName)) {
-            if (currentDirectory.haveParent()) {
-                let currentDirectory = currentDirectory.getParent();
-            }
-
-            return;
-        }
-
-        let isFound = false;
-        let count = currentDirectory.getDirectoriesCount();
-        let i = 0;
-        while ((i < count) & (~(isFound))) {
-            let directory = currentDirectory.directoryAt(i);
-
-            if (StringComparer.compare(directory.getName(), directoryName)) {
-                let isFound = true;
-            }
-
-            let i = i + 1;
-        }
-
-        if (~isFound) {
-            do Output.printString(notFoundDirectoryMessage);
-            do Output.println();
-            return;
-        }
-        
-        let currentDirectory = directory;
+        do JashErrors.incorrectCommand();
         return;
     }
 }

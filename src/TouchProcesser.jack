@@ -1,0 +1,38 @@
+class TouchProcesser {
+    static String touchCommand;
+    static String fileNameIsEmptyMessage;
+
+    function void init() {
+        let touchCommand = "TOUCH";
+        let fileNameIsEmptyMessage = "FILE NAME IS EMPTY";
+        return;
+    }
+
+    function bool isTouch(ParsedCommand command) {
+        if (~(StringComparer.compare(touchCommand, command.getName()))) {
+            return false;
+        }
+
+        if (~(command.getArgumentsCount() = 1)) {
+            do JashErrors.incorrectArgumentsCount();
+            return false;
+        }
+
+        return true;
+    }
+
+    function void process(JashState state, String fileName) {
+        var Directory currentDirectory;
+        var File newFile;
+
+        if (fileName.length() = 0) {
+            do Output.printString(fileNameIsEmptyMessage);
+            do Output.println();
+        }
+
+        let currentDirectory = state.getCurrentDirectory();
+        let newFile = File.new(fileName, currentDirectory);
+        do currentDirectory.pushFile(newFile);
+        return;
+    }
+}

@@ -1,0 +1,22 @@
+class JashErrors {
+    static String incorrectCommandMessage;
+    static String incorrectArgumentsCountMessage;
+
+    function void init() {
+        let incorrectCommandMessage = "INCORRECT COMMAND";
+        let incorrectArgumentsCountMessage = "INCORRECT ARGUMENTS COUNT";
+        return;
+    }
+
+    function void incorrectCommand() {
+        do Output.printString(incorrectCommandMessage);
+        do Output.println();
+        return;
+    }
+
+    function void incorrectArgumentsCount() {
+        do Output.printString(incorrectArgumentsCountMessage);
+        do Output.println();
+        return;
+    }
+}

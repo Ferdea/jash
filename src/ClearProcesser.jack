@@ -1,0 +1,27 @@
+class ClearProcesser {
+    static String clearCommand;
+
+    function void init() {
+        let clearCommand = "CLEAR";
+        return;
+    }
+
+    function bool isClear(ParsedCommand command) {
+        if (~(StringComparer.compare(clearCommand, command.getName()))) {
+            return false;
+        }
+
+        if (~(command.getArgumentsCount() = 0)) {
+            do JashErrors.incorrectArgumentsCount();
+            return false;
+        }
+
+        return true;
+    }
+
+    function void process() {
+        do Screen.clearScreen();
+        do Output.moveCursor(0, 0);
+        return;
+    }
+}

@@ -1,0 +1,58 @@
+class LsProcesser {
+    static String lsCommand;
+    static String directoryEmptyMessage;
+
+    function void init() {
+        let lsCommand = "LS";
+        let directoryEmptyMessage = "DIRECTORY IS EMPTY";
+        return;
+    }
+
+    function bool isLs(ParsedCommand command) {
+        if (~(StringComparer.compare(lsCommand, command.getName()))) { 
+            return false;
+        }
+
+        if (~(command.getArgumentsCount() = 0)) {
+            do JashErrors.incorrectArgumentsCount();
+            return false;
+        }
+
+        return true;
+    }
+
+    function void process(JashState state) {
+        var int i, count, allCount;
+        var Directory directory, currentDirectory;
+        var File file;
+
+        let currentDirectory = state.getCurrentDirectory();
+        let allCount = currentDirectory.getDirectoriesCount() + currentDirectory.getFilesCount();
+        if (allCount = 0) {
+            do Output.printString(directoryEmptyMessage);
+            do Output.println();
+            return;
+        }
+
+        let count = currentDirectory.getDirectoriesCount();
+        let i = 0;
+        while (i < count) {
+            let directory = currentDirectory.directoryAt(i);
+            do Output.printString(directory.getName());
+            do Output.printChar(47);
+            do Output.println();
+            let i = i + 1;
+        }
+
+        let count = currentDirectory.getFilesCount();
+        let i = 0;
+        while (i < count) {
+            let file = currentDirectory.fileAt(i);
+            do Output.printString(file.getName());
+            do Output.println();
+            let i = i + 1;
+        }
+
+        return;
+    }
+}

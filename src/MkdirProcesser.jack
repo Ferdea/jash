@@ -1,0 +1,37 @@
+class MkdirProcesser {
+    static String mkdirCommand;
+    static String directoryNameIsEmptyMessage;
+
+    function void init() {
+        let mkdirCommand = "MKDIR";
+        let directoryNameIsEmptyMessage = "DIRECTORY NAME IS EMPTY";
+        return;
+    }
+
+    function bool isMkdir(ParsedCommand command) {
+        if (~(StringComparer.compare(mkdirCommand, command.getName()))) {
+            return false;
+        }
+
+        if (~(command.getArgumentsCount() = 1)) {
+            do JashErrors.incorrectArgumentsCount();
+            return false;
+        }
+
+        return true;
+    }
+
+    function void process(JashState state, String directoryName) {
+        var Directory newDirectory, currentDirectory;
+
+        if (directoryName.length() = 0) {
+            do Output.printString(directoryNameIsEmptyMessage);
+            do Output.println();
+        }
+
+        let currentDirectory = state.getCurrentDirectory();
+        let newDirectory = Directory.new(directoryName, currentDirectory);
+        do currentDirectory.pushDirectory(newDirectory);
+        return;
+    }
+}

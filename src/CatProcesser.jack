@@ -1,0 +1,69 @@
+class CatProcesser {
+    static String catCommand;
+    static String notFoundFileMessage;
+    static String fileIsEmptyMessage;
+
+    function void init() {
+        let catCommand = "CAT";
+        let notFoundFileMessage = "FILE NOT FOUND";
+        let fileIsEmptyMessage = "FILE IS EMPTY";
+        return;
+    }
+
+    function bool isCat(ParsedCommand command) {
+        if (~(StringComparer.compare(catCommand, command.getName()))) {
+            return false;
+        }
+
+        if (~(command.getArgumentsCount() = 1)) {
+            do JashErrors.incorrectArgumentsCount();
+            return false;
+        }
+
+        return true;
+    }
+
+    function void process(JashState state, String fileName) {
+        var int i, count, contentSize;
+        var Directory currentDirectory;
+        var File file;
+        var String line;
+        var bool isFound;
+
+        let currentDirectory = state.getCurrentDirectory();
+        let isFound = false;
+        let count = currentDirectory.getFilesCount();
+        let i = 0;
+        while ((i < count) & (~(isFound))) {
+            let file = currentDirectory.fileAt(i);
+
+            if (StringComparer.compare(file.getName(), fileName)) {
+                let isFound = true;
+            }
+
+            let i = i + 1;
+        }
+
+        if (~isFound) {
+            do Output.printString(notFoundFileMessage);
+            do Output.println();
+            return;
+        }
+
+        let contentSize = file.getContentSize();
+        if (contentSize = 0) {
+            do Output.printString(fileIsEmptyMessage);
+            do Output.println();
+            return;
+        }
+        
+        let i = 0;
+        while (i < contentSize) {
+            let line = file.lineAt(i);
+            do Output.printString(line);
+            do Output.println();
+        }
+
+        return;
+    }
+}

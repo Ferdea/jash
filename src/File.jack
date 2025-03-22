@@ -34,4 +34,12 @@ class File {
     method String getName() {
         return name;
     }
+
+    method int getContentSize() {
+        return contentSize;
+    }
+
+    method String lineAt(int i) {
+        return content[i];
+    }
 }

@@ -93,6 +93,25 @@ class Directory {
         return;
     }
 
+    method void removeDirectory(int i) {
+        var Directory directory;
+        
+        if ((i < 0) | (~(i < directoriesSize))) {
+            do Sys.error(24);
+            return;
+        }
+
+        let directory = directories[i];
+        do directory.dispose();
+
+        let directoriesSize = directoriesSize - 1;
+        while (i < directoriesSize) {
+            let directories[i] = directories[i + 1];
+            let i = i + 1;
+        }
+        return;
+    }
+
     method void pushFile(File file) {
         if ((filesSize + 1) = filesMaxSize) {
             do Output.printString(tooManyFilesMessage);
@@ -104,11 +123,61 @@ class Directory {
         return;
     }
 
+    method void removeFile(int i) {
+        var File file;
+        
+        if ((i < 0) | (~(i < filesSize))) {
+            do Sys.error(25);
+            return;
+        }
+
+        let file = files[i];
+        do file.dispose();
+
+        let filesSize = filesSize - 1;
+        while (i < filesSize) {
+            let files[i] = files[i + 1];
+            let i = i + 1;
+        }
+        return;
+    }
+
     method bool haveParent() {
         return ~(parent = null);
     }
 
     method Directory getParent() {
         return parent;
+    }
+
+    method String getPath() {
+        var String path, directoryName;
+        var int pathSize;
+        var Directory directory;
+
+        let pathSize = 0;
+        let directory = this;
+        while (directory.haveParent()) {
+            let directoryName = directory.getName();
+            let pathSize = pathSize + directoryName.length() + 1;
+            let directory = directory.getParent();
+        }
+        let directoryName = directory.getName();
+        let pathSize = pathSize + directoryName.length();
+
+        let path = String.new(pathSize);
+        return getPathRecursive(path);
+    }
+
+    method String getPathRecursive(String path) {
+        if (parent = null) {
+            do StringAppend.appendString(path, name);
+            return path;
+        }
+
+        do parent.getPathRecursive(path);
+        do path.appendChar(47);
+        do StringAppend.appendString(path, name);
+        return path;
     }
 }

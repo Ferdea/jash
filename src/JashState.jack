@@ -1,0 +1,29 @@
+class JashState {
+    field Directory rootDirectory;
+    field Directory currentDirectory;
+
+    constructor JashState new() {
+        let rootDirectory = Directory.new("~", null);
+        let currentDirectory = rootDirectory;
+        return this;
+    }
+
+    method void dispose() {
+        do rootDirectory.dispose();
+        do Memory.deAlloc(this);
+        return;
+    }
+
+    method Directory getRootDirectory() {
+        return rootDirectory;
+    }
+
+    method Directory getCurrentDirectory() {
+        return currentDirectory;
+    }
+
+    method void setCurrentDirectory(Directory directory) {
+        let currentDirectory = directory;
+        return;
+    }
+}

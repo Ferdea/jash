@@ -1,0 +1,92 @@
+class RmProcesser {
+    static String rmCommand;
+    static String notFoundFileOrDirectoryMessage;
+
+    function void init() {
+        let rmCommand = "RM";
+        let notFoundFileOrDirectoryMessage = "FILE OR DIRECTORY NOT FOUND";
+        return;
+    }
+
+    function bool isRm(ParsedCommand command) {
+        if (~(StringComparer.compare(rmCommand, command.getName()))) {
+            return false;
+        }
+
+        if (~(command.getArgumentsCount() = 1)) {
+            do JashErrors.incorrectArgumentsCount();
+            return false;
+        }
+
+        return true;
+    }
+
+    function void process(JashState state, String name) {
+        if (RmProcesser.processFile(state, name)) {
+            return;
+        }
+
+        if (RmProcesser.processDirectory(state, name)) {
+            return;
+        }
+
+        do Output.printString(notFoundFileOrDirectoryMessage);
+        do Output.println();
+        return;
+    }
+
+    function bool processDirectory(JashState state, String name) {
+        var int i, count;
+        var Directory directory, currentDirectory;
+        var bool isFound;
+
+        let currentDirectory = state.getCurrentDirectory();
+        let isFound = false;
+        let count = currentDirectory.getDirectoriesCount();
+        let i = 0;
+        while ((i < count) & (~(isFound))) {
+            let directory = currentDirectory.directoryAt(i);
+
+            if (StringComparer.compare(directory.getName(), name)) {
+                let isFound = true;
+            }
+
+            let i = i + 1;
+        }
+
+        if (~isFound) {
+            return false;
+        }
+        
+        do currentDirectory.removeDirectory(i - 1);
+        return true;
+    }
+
+    function bool processFile(JashState state, String name) {
+        var int i, count;
+        var Directory currentDirectory;
+        var File file;
+        var bool isFound;
+
+        let currentDirectory = state.getCurrentDirectory();
+        let isFound = false;
+        let count = currentDirectory.getFilesCount();
+        let i = 0;
+        while ((i < count) & (~(isFound))) {
+            let file = currentDirectory.fileAt(i);
+
+            if (StringComparer.compare(file.getName(), name)) {
+                let isFound = true;
+            }
+
+            let i = i + 1;
+        }
+
+        if (~isFound) {
+            return false;
+        }
+        
+        do currentDirectory.removeFile(i - 1);
+        return true;
+    }
+}

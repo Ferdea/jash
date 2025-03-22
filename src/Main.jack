@@ -1,8 +1,7 @@
 class Main {
     function void main() {
         var Jash jash;
-        do Jash.init();
-        do Directory.init();
+        do Init.init();
         let jash = Jash.new();
         do jash.run();
         do jash.dispose();

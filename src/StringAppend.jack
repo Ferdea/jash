@@ -1,0 +1,13 @@
+class StringAppend {
+    function void appendString(String result, String source) {
+        var int i;
+
+        let i = 0;
+        while (i < source.length()) {
+            do result.appendChar(source.charAt(i));
+            let i = i + 1;
+        }
+
+        return;
+    }
+}
