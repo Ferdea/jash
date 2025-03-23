@@ -148,33 +148,26 @@ class Directory {
     }
 
     method String getPath() {
-        var String path, directoryName;
-        var int pathSize;
-        var Directory directory;
+        var StringBuilder pathBuilder;
+        var String result;
 
-        let pathSize = 0;
-        let directory = this;
-        while (directory.haveParent()) {
-            let directoryName = directory.getName();
-            let pathSize = pathSize + directoryName.length() + 1;
-            let directory = directory.getParent();
-        }
-        let directoryName = directory.getName();
-        let pathSize = pathSize + directoryName.length();
+        let pathBuilder = StringBuilder.new(4);
+        do getPathRecursive(pathBuilder);
+        let result = pathBuilder.build();
+        do pathBuilder.dispose();
 
-        let path = String.new(pathSize);
-        return getPathRecursive(path);
+        return result;
     }
 
-    method String getPathRecursive(String path) {
+    method void getPathRecursive(StringBuilder pathBuilder) {
         if (parent = null) {
-            do StringAppend.appendString(path, name);
-            return path;
+            do pathBuilder.addString(name);
+            return;
         }
 
-        do parent.getPathRecursive(path);
-        do path.appendChar(47);
-        do StringAppend.appendString(path, name);
-        return path;
+        do parent.getPathRecursive(pathBuilder);
+        do pathBuilder.add(47);
+        do pathBuilder.addString(name);
+        return;
     }
 }
