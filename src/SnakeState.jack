@@ -1,0 +1,168 @@
+class SnakeState {
+    static int fieldSizeX;
+    static int fieldSizeY;
+
+    field List snake;
+    field Point apple;
+    field int movesCount;
+    field int score;
+    field int direction;
+    field bool isEnd;
+
+    function void init() {
+        let fieldSizeX = 32;
+        let fieldSizeY = 15;
+        return;
+    }
+
+    constructor SnakeState new() {
+        let snake = List.new(4);
+        do snake.add(Point.new(14, 7));
+        do snake.add(Point.new(15, 7));
+        do snake.add(Point.new(16, 7));
+        do snake.add(Point.new(17, 7));
+
+        let apple = Point.new(5, 5);
+        let movesCount = 0;
+        let score = 0;
+        let direction = -1;
+        let isEnd = false;
+        return this;
+    }
+
+    method void dispose() {
+        var Point point;
+        while (snake.getSize() > 0) {
+            let point = snake.remove();
+            do point.dispose();
+        }
+        do snake.dispose();
+        do apple.dispose();
+        do Memory.deAlloc(this);
+        return;
+    }
+
+    method int getSnakeSize() {
+        return snake.getSize();
+    }
+
+    method Point snakeAt(int i) {
+        return snake.elementAt(i);
+    }
+
+    method Point getApple() {
+        return apple;
+    }
+
+    method int getScore() {
+        return score;
+    }
+
+    method bool makeMove(int newDirection) {
+        var Point head, tail;
+
+        if (~(newDirection = -1)) {
+            let direction = SnakeState.getNewDirection(direction, newDirection);
+        }
+
+        if (direction = -1) {
+            return true;
+        }
+
+        let head = snake.elementAt(0);
+        let head = SnakeState.movePoint(head, direction);
+
+        if (~SnakeState.checkBounds(head)) {
+            do head.dispose();
+            return false;
+        }
+        if (SnakeState.checkSelfIntersection(head, snake)) {
+            do head.dispose();
+            return false;
+        }
+
+        do snake.set(0, head);
+
+        if (Point.equals(head, apple)) {
+            do apple.dispose();
+            let apple = SnakeState.getNewApple(movesCount);
+            let score = score + 50;
+        } else {
+            let tail = snake.remove();
+            do tail.dispose();
+        }
+
+        let movesCount = movesCount + 1;
+        return true;
+    }
+
+    function int getNewDirection(int oldDirection, int newDirection) {
+        if (oldDirection = -1) {
+            return newDirection;
+        }
+        if ((oldDirection = 0) & (~(newDirection = 2))) {
+            return newDirection;
+        }
+        if ((oldDirection = 1) & (~(newDirection = 3))) {
+            return newDirection;
+        }
+        if ((oldDirection = 2) & (~(newDirection = 0))) {
+            return newDirection;
+        }
+        if ((oldDirection = 3) & (~(newDirection = 1))) {
+            return newDirection;
+        }
+
+        return oldDirection;
+    }
+
+    function Point movePoint(Point point, int direction) {
+        if (direction = 0) {
+            return Point.new(point.getX() - 1, point.getY());
+        }
+        if (direction = 1) {
+            return Point.new(point.getX(), point.getY() - 1);
+        }
+        if (direction = 2) {
+            return Point.new(point.getX() + 1, point.getY());
+        }
+        if (direction = 3) {
+            return Point.new(point.getX(), point.getY() + 1);
+        }
+
+        return point.copy();
+    }
+
+    function bool checkBounds(Point point) {
+        var int x, y;
+        let x = point.getX();
+        let y = point.getY();
+        return (~(x < 0)) & (x < fieldSizeX) & (~(y < 0)) & (y < fieldSizeY);
+    }
+
+    function bool checkSelfIntersection(Point head, List snake) {
+        var int i;
+
+        let i = 0;
+        while (i < snake.getSize()) {
+            if (Point.equals(snake.elementAt(i), head)) {
+                return true;
+            }
+            let i = i + 1;
+        }
+
+        return false;
+    }
+
+    function Point getNewApple(int seed) {
+        var int x, y;
+
+        let x = seed * 5;
+        let x = x - (32 * (x / 32));
+        
+        let y = seed * 3;
+        let y = y - (15 * (y / 15));
+
+        return Point.new(x, y);
+    }
+}

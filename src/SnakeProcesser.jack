@@ -1,0 +1,94 @@
+class SnakeProcesser {
+    static String snakeCommand;
+    static String snakeFilename;
+    static String highScoreMessage;
+
+    function void init() {
+        let snakeCommand = "SNAKE";
+        let snakeFilename = ".SNAKE";
+        let highScoreMessage = "SNAKE HIGH SCORE: ";
+        return;
+    }
+
+    function String getName() {
+        return snakeCommand;
+    }
+
+    function bool isSnake(ParsedCommand command) {
+        if (~(StringComparer.compare(snakeCommand, command.getName()))) {
+            return false;
+        }
+
+        if (~(command.getArgumentsCount() = 0)) {
+            do JashErrors.incorrectArgumentsCount();
+            return false;
+        }
+
+        return true;
+    }
+
+    function ContentBuffer process(JashState state) {
+        var String stringValue;
+        var StringBuilder builder;
+        var ContentBuffer result;
+        var SnakeGame game;
+        var int highScore;
+        var Directory rootDirectory;
+        var File file;
+
+        let rootDirectory = state.getRootDirectory();
+        let highScore = SnakeProcesser.tryGetHighScore(rootDirectory);
+
+        let game = SnakeGame.new(highScore);
+        let highScore = game.run();
+        do game.dispose();
+
+        do Screen.clearScreen();
+        do Output.moveCursor(0, 0);
+
+        let file = SnakeProcesser.ensureSnakeFileExisting(rootDirectory);
+        let stringValue = String.new(6);
+        do stringValue.setInt(highScore);
+
+        do file.store(stringValue);
+
+        let builder = StringBuilder.fromString(highScoreMessage);
+        do builder.addString(stringValue);
+
+        let result = ContentBuffer.new();
+        do result.add(builder.build());
+        do builder.dispose();
+
+        return result;
+    }
+
+    function int tryGetHighScore(Directory root) {
+        var File file;
+        var int fileIndex;
+        var String highScoreString;
+
+        let fileIndex = root.fileByName(snakeFilename);
+        if (fileIndex = -1) {
+            return 0;
+        }
+
+        let file = root.fileAt(fileIndex);
+        let highScoreString = file.lineAt(file.getContentSize() - 1);
+        return highScoreString.intValue();
+    }
+
+    function File ensureSnakeFileExisting(Directory root) {
+        var int fileIndex;
+        var File file;
+
+        let fileIndex = root.fileByName(snakeFilename);
+        if (~(fileIndex = -1)) {
+            let file = root.fileAt(fileIndex);
+            return file;
+        }
+
+        let file = File.new(snakeFilename, root);
+        do root.pushFile(file);
+        return file;
+    }
+}

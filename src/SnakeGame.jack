@@ -1,0 +1,157 @@
+class SnakeGame {
+    static String snakeMessage;
+    static String scoreMessage;
+    static String highScoreMessage;
+    static String inputInstructionMessage;
+    static String menuInputInstructionMessage;
+
+    field SnakeState state;
+    field int pressedKey;
+    field int highScore;
+    field int ticksBetweenMoves;
+    field bool isExit;
+
+    constructor SnakeGame new(int highScoreArg) {
+        let state = SnakeState.new();
+        let ticksBetweenMoves = 10000;
+        let highScore = highScoreArg;
+        let isExit = false;
+        return this;
+    }
+
+    method void dispose() {
+        do state.dispose();
+        do Memory.deAlloc(this);
+        return;
+    }
+
+    function void init() {
+        let snakeMessage = "SNAKE";
+        let scoreMessage = "SCORE: ";
+        let highScoreMessage = "HIGH SCORE: ";
+        let inputInstructionMessage = "MOVES USING ARROWS, Q FOR EXIT";
+        let menuInputInstructionMessage = "ANY KEY FOR START, Q FOR EXIT";
+        return;
+    }
+
+    method int run() {
+        var int score, direction;
+        var bool isRunning;
+        let isRunning = false;
+        let score = -1;
+        
+        while (~isExit) {
+            do wait();
+        
+            if (isRunning) {
+                let isRunning = state.makeMove(direction);
+                do drawGame();
+
+                if (~isRunning) {
+                    let score = state.getScore();
+                    let highScore = Math.max(highScore, score);
+                    do state.dispose();
+                }
+
+                if ((pressedKey > 129) & (pressedKey < 134)) {
+                    let direction = pressedKey - 130;
+                }
+                if (pressedKey = 81) {
+                    let isExit = true;
+                }                
+            } else {
+                do drawMenu(score);
+
+                if (~(pressedKey = 0)) {
+                    let isRunning = true;
+                    let direction = -1;
+                    let score = -1;
+                    let state = SnakeState.new();
+                }
+                if (pressedKey = 81) {
+                    let isExit = true;
+                }   
+            }
+        }
+        
+        return highScore;
+    }
+
+    method void drawMenu(int score) {
+        do Screen.clearScreen();
+        do Screen.setColor(true);
+
+        do Output.moveCursor(10, 10);
+        do Output.printString(snakeMessage);
+
+        if (~(score = -1)) {
+            do Output.moveCursor(11, 10);
+            do Output.printString(scoreMessage);
+            do Output.printInt(score);
+
+            do Output.moveCursor(12, 10);
+            do Output.printString(highScoreMessage);
+            do Output.printInt(highScore);
+        } else {
+            do Output.moveCursor(11, 10);
+            do Output.printString(highScoreMessage);
+            do Output.printInt(highScore);
+        }
+        
+        do Output.moveCursor(22, 10);
+        do Output.printString(menuInputInstructionMessage);
+
+        return;
+    }
+
+    method void drawGame() {
+        var int i;
+
+        do Screen.clearScreen();
+        do Screen.setColor(true);
+
+        do Output.moveCursor(0, 0);
+        do Output.printString(scoreMessage);
+        do Output.printInt(state.getScore());
+        do Output.moveCursor(0, 34);
+        do Output.printString(inputInstructionMessage);
+
+        do Screen.drawLine(0, 15, 511, 15);
+        
+        let i = 0;
+        while (i < state.getSnakeSize()) {
+            do drawSnakePart(state.snakeAt(i));
+            let i = i + 1;
+        }
+
+        do drawApple(state.getApple());
+
+        return;
+    }
+
+    method void wait() {
+        var int i;
+        let i = 0;
+        while (i < ticksBetweenMoves) {
+            let pressedKey = Keyboard.keyPressed();
+            let i = i + 1;
+        }
+        return;
+    }
+
+    method void drawSnakePart(Point point) {
+        var int x, y;
+        let x = 16 * point.getX();
+        let y = 16 * point.getY() + 16;
+        do Screen.drawRectangle(x, y, x + 15, y + 15);
+        return;
+    }
+
+    method void drawApple(Point point) {
+        var int x, y;
+        let x = 16 * point.getX() + 8;
+        let y = 16 * point.getY() + 24;
+        do Screen.drawCircle(x, y, 7);
+        return;
+    }
+}

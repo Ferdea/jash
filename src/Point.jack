@@ -1,0 +1,31 @@
+class Point {
+    field int x;
+    field int y;
+
+    constructor Point new(int xArg, int yArg) {
+        let x = xArg;
+        let y = yArg;
+        return this;
+    }
+
+    method void dispose() {
+        do Memory.deAlloc(this);
+        return;
+    }
+
+    method int getX() {
+        return x;
+    }
+
+    method int getY() {
+        return y;
+    }
+
+    function bool equals(Point left, Point right) {
+        return (left.getX() = right.getX()) & (left.getY() = right.getY());
+    }
+
+    method Point copy() {
+        return Point.new(x, y);
+    }
+}

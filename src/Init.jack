@@ -18,6 +18,9 @@ class Init {
         do TailProcesser.init();
         do GrepProcesser.init();
         do ManProcesser.init();
+        do SnakeProcesser.init();
+        do SnakeState.init();
+        do SnakeGame.init();
         return;
     }
 }

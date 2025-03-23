@@ -156,6 +156,9 @@ class Jash {
         if (ManProcesser.isMan(command)) {
             return ManProcesser.process(command.argumentAt(0));
         }
+        if (SnakeProcesser.isSnake(command)) {
+            return SnakeProcesser.process(state);
+        }
 
         return null;
     }

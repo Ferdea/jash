@@ -16,6 +16,7 @@ class ManProcesser {
     static String tailManMessage;
     static String grepManMessage;
     static String manManMessage;
+    static String snakeManMessage;
 
     function void init() {
         let manCommand = "MAN";
@@ -35,6 +36,7 @@ class ManProcesser {
         let tailManMessage = "TAIL [LINES] [FILE] - OUTPUT THE LAST PART OF LINES";
         let grepManMessage = "GREP [PATTERN] [FILE] - PRINT LINES THAT MATCH PATTERN";
         let manManMessage = "MAN [COMMAND] - AN INTERFACE TO THE SYSTEM REFERENCE MANUALS";
+        let snakeManMessage = "SNAKE - RUN SNAKE GAME";
 
         return;
     }
@@ -114,6 +116,10 @@ class ManProcesser {
         }
         if (StringComparer.compare(ManProcesser.getName(), command)) {
             do result.add(StringCopy.copy(manManMessage));
+            return result;
+        }
+        if (StringComparer.compare(SnakeProcesser.getName(), command)) {
+            do result.add(StringCopy.copy(snakeManMessage));
             return result;
         }
 
