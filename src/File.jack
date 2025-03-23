@@ -4,6 +4,10 @@ class File {
     field Directory parent;
 
     constructor File new(String nameArg, Directory parentArg) {
+        if (nameArg.length() = 0) {
+            do Sys.error(31);
+        }
+
         let name = nameArg;
         let content = List.new(4);
         let parent = parentArg;
@@ -34,5 +38,20 @@ class File {
 
     method String lineAt(int i) {
         return content.elementAt(i);
+    }
+
+    method void storeFromBuffer(ContentBuffer buffer) {
+        var int i;
+        let i = 0;
+        while (i < buffer.getSize()) {
+            do store(buffer.lineAt(i));
+            let i = i + 1;
+        }
+        return;
+    }
+
+    method void store(String line) {
+        do content.add(StringCopy.copy(line));
+        return;
     }
 }

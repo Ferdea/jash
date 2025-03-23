@@ -4,6 +4,10 @@ class List {
     field Array array;
 
     constructor List new(int capacityArg) {
+        if (capacityArg = 0) {
+            let capacityArg = 1;
+        }
+
         let size = 0;
         let capacity = capacityArg;
         let array = Array.new(capacity);

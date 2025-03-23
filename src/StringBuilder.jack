@@ -21,6 +21,10 @@ class StringBuilder {
         return;
     }
 
+    method int getSize() {
+        return chars.getSize();
+    }
+
     method void add(char c) {
         do chars.add(c);
         return;

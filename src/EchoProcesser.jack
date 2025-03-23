@@ -22,7 +22,7 @@ class EchoProcesser {
     function ContentBuffer process(String line) {
         var ContentBuffer result;
         let result = ContentBuffer.new();
-        do result.add(String.copy(line));
+        do result.add(StringCopy.copy(line));
         return result;
     }
 }

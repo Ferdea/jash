@@ -37,4 +37,9 @@ class ParsedCommand {
     method String argumentAt(int i) {
         return arguments.elementAt(i);
     }
+
+    method void addArgument(String argument) {
+        do arguments.add(argument);
+        return;
+    }
 }

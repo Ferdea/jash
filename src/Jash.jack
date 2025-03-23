@@ -1,10 +1,12 @@
 class Jash {
     static String commandReadMessage;
+    static String emptyCommandMessage;
 
     field JashState state;
 
     function void init() {
         let commandReadMessage = " > ";
+        let emptyCommandMessage = "EMPTY COMMAND";
         return;
     }
 
@@ -20,19 +22,71 @@ class Jash {
     }
 
     method void run() {
-        var String command;
+        var String line, outputFile;
+        var ParsedLine parsedLine;
+        var ParsedCommand command;
         var ContentBuffer content;
+        var int i, commandsCount, fileIndex;
+        var bool isError;
+        var File file;
+        var Directory currentDirectory;
 
         while (true) {
-            let command = readCommand();
-            let content = processCommand(command);
-            do command.dispose();
+            let line = readCommand();
 
-            if (content = null) {
-                do JashErrors.incorrectCommand();
+            if (line.length() = 0) {
+                do Output.printString(emptyCommandMessage);
             } else {
-                do printContent(content);
-                do content.dispose();
+                let parsedLine = CommandParser.parse(line);
+                do line.dispose();
+
+                let commandsCount = parsedLine.getCommandsCount();
+                let i = 0;
+                let isError = false;
+                while ((~(isError)) & (i < commandsCount)) {
+                    let command = parsedLine.commandAt(i);
+                    let content = processCommand(command);
+
+                    if (i > 0) {
+                        let currentDirectory = state.getCurrentDirectory();
+                        let fileIndex = currentDirectory.fileByName(StringCopy.copy(CommandParser.getPipeBufferName()));
+                        do currentDirectory.removeFile(fileIndex);
+                    }
+
+                    if (content = null) {
+                        do JashErrors.incorrectCommand();
+                        let isError = true;
+                    } else { 
+                        if ((i + 1) < commandsCount) {
+                            let currentDirectory = state.getCurrentDirectory();
+                            let file = File.new(StringCopy.copy(CommandParser.getPipeBufferName()), currentDirectory);
+                            do file.storeFromBuffer(content);
+                            do content.dispose();
+                            do currentDirectory.pushFile(file);
+                        }
+                    }
+                    let i = i + 1;
+                }
+
+                if (~isError) {
+                    let outputFile = parsedLine.getOutputFile();
+                    if (outputFile = null) {
+                        do printContent(content);
+                    } else {
+                        let currentDirectory = state.getCurrentDirectory();
+                        let fileIndex = currentDirectory.fileByName(outputFile);
+
+                        if (fileIndex = -1) {
+                            let file = File.new(outputFile, currentDirectory);
+                            do currentDirectory.pushFile(file);
+                        } else {
+                            let file = currentDirectory.fileAt(fileIndex);
+                        }
+                        
+                        do file.storeFromBuffer(content);
+                    }
+                    do content.dispose();
+                }
             }
         }
 
@@ -53,11 +107,7 @@ class Jash {
         return command;
     }
 
-    method ContentBuffer processCommand(String line) {
-        var ParsedCommand command;
-
-        let command = CommandParser.parse(line);
-
+    method ContentBuffer processCommand(ParsedCommand command) {
         if (LsProcesser.isLs(command)) {
             return LsProcesser.process(state);
         }
@@ -81,6 +131,9 @@ class Jash {
         }
         if (EchoProcesser.isEcho(command)) {
             return EchoProcesser.process(command.argumentAt(0));
+        }
+        if (WcProcesser.isWc(command)) {
+            return WcProcesser.process(state, command.argumentAt(0));
         }
 
         return null;

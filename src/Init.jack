@@ -11,6 +11,8 @@ class Init {
         do ClearProcesser.init();
         do CatProcesser.init();
         do EchoProcesser.init();
+        do CommandParser.init();
+        do WcProcesser.init();
         return;
     }
 }

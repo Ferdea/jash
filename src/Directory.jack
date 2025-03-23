@@ -14,6 +14,10 @@ class Directory {
     }
 
     constructor Directory new(String nameArg, Directory parentArg) {
+        if (nameArg.length() = 0) {
+            do Sys.error(32);
+        }
+
         let name = nameArg;
         let directories = List.new(4);
         let files = List.new(4);
@@ -53,12 +57,62 @@ class Directory {
         return directories.elementAt(i);
     }
 
+    method int directoryByName(String name) {
+        var int i, count;
+        var Directory directory;
+        var bool isFound;
+
+        let isFound = false;
+        let count = directories.getSize();
+        let i = 0;
+        while ((i < count) & (~(isFound))) {
+            let directory = directories.elementAt(i);
+
+            if (StringComparer.compare(directory.getName(), name)) {
+                let isFound = true;
+            }
+
+            let i = i + 1;
+        }
+
+        if (~isFound) {
+            return -1;
+        }
+        
+        return i - 1;
+    }
+
     method int getFilesCount() {
         return files.getSize();
     }
 
     method File fileAt(int i) {
         return files.elementAt(i);
+    }
+
+    method int fileByName(String name) {
+        var int i, count;
+        var File file;
+        var bool isFound;
+
+        let isFound = false;
+        let count = files.getSize();
+        let i = 0;
+        while ((i < count) & (~(isFound))) {
+            let file = files.elementAt(i);
+
+            if (StringComparer.compare(file.getName(), name)) {
+                let isFound = true;
+            }
+
+            let i = i + 1;
+        }
+
+        if (~isFound) {
+            return -1;
+        }
+
+        return i - 1;
     }
 
     method void pushDirectory(Directory directory) {

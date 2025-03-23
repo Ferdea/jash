@@ -1,37 +1,79 @@
 class CommandParser {
-    function ParsedCommand parse(String line) {
-        var String commandName;
-        var StringBuilder builder;
-        var List args;
-        var int i;
-        var char currentChar;
+    static String bufferFilename;
 
-        let builder = StringBuilder.new(4);
-        let args = List.new(4);
+    function void init() {
+        let bufferFilename = "BUFFER_FOR_PIPE";
+        return;
+    }
+
+    function String getPipeBufferName() {
+        return bufferFilename;
+    }
+
+    function ParsedLine parse(String line) {
+        var ParsedLine result;
+        var ParsedCommand command;
+        var List splitLine, commands;
+        var String outputFile, temp, commandLine;
+        var int i;
+
+        let splitLine = StringSplit.split(line, 62);
+        if (splitLine.getSize() > 2) {
+            do JashErrors.incorrectCommand();
+            return null;
+        }
+
+        if (splitLine.getSize() = 2) {
+            let temp = splitLine.elementAt(1);
+            let outputFile = StringTrim.trimSpaces(temp);
+            do temp.dispose();
+        }
+
+        let temp = splitLine.elementAt(0);
+        let commandLine = StringTrim.trimSpaces(temp);
+        do temp.dispose();
+        do splitLine.dispose();
+
+        let commands = List.new(4);
+
+        let splitLine = StringSplit.split(commandLine, 124);
+        do commandLine.dispose();
 
         let i = 0;
-        while (i < line.length()) {
-            let currentChar = line.charAt(i);
-            if (currentChar = 32) {
-                if (commandName = null) {
-                    let commandName = builder.build();
-                } else {
-                    do args.add(builder.build());
-                }
-                do builder.clear();
-            } else {
-                do builder.add(currentChar);
+        while (i < splitLine.getSize()) {
+            let temp = splitLine.elementAt(i);
+            let commandLine = StringTrim.trimSpaces(temp);
+            do temp.dispose();
+            
+            let command = CommandParser.parseCommand(commandLine);
+            do commandLine.dispose();
+            if (i > 0) {
+                do command.addArgument(StringCopy.copy(bufferFilename));
             }
+            do commands.add(command);
+            let i = i + 1;
+        }
+        do splitLine.dispose();
+
+        return ParsedLine.new(commands, outputFile);
+    }
+
+    function ParsedCommand parseCommand(String line) {
+        var String commandName;
+        var List args, splitLine;
+        var int i;
+
+        let splitLine = StringSplit.splitSpaces(line);
+        let commandName = splitLine.elementAt(0);
+        
+        let args = List.new(splitLine.getSize() - 1);
+        let i = 1;
+        while (i < splitLine.getSize()) {
+            do args.add(splitLine.elementAt(i));
             let i = i + 1;
         }
 
-        if (commandName = null) {
-            let commandName = builder.build();
-        } else {
-            do args.add(builder.build());
-        }
-
-        do builder.dispose();
+        do splitLine.dispose();
         return ParsedCommand.new(commandName, args);
     }
 }

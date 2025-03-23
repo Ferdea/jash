@@ -1,0 +1,22 @@
+class ParsedLine {
+    field List commands;
+    field String output;
+
+    constructor ParsedLine new(List commandsArg, String outputArg) {
+        let commands = commandsArg;
+        let output = outputArg;
+        return this;
+    }
+
+    method int getCommandsCount() {
+        return commands.getSize();
+    }
+
+    method ParsedCommand commandAt(int i) {
+        return commands.elementAt(i);
+    }
+
+    method String getOutputFile() {
+        return output;
+    } 
+}   

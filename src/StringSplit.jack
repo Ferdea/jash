@@ -1,0 +1,34 @@
+class StringSplit {
+    function List splitSpaces(String line) {
+        return StringSplit.split(line, 32);
+    }
+
+    function List split(String line, char separator) {
+        var List result;
+        var StringBuilder builder;
+        var int i;
+        var char currentChar;
+
+        let builder = StringBuilder.new(4);
+        let result = List.new(4);
+
+        let i = 0;
+        while (i < line.length()) {
+            let currentChar = line.charAt(i);
+            if (currentChar = separator) {
+                do result.add(builder.build());
+                do builder.clear();
+            } else {
+                do builder.add(currentChar);
+            }
+            let i = i + 1;
+        }
+
+        if (builder.getSize() > 0) {
+            do result.add(builder.build());
+        }
+
+        do builder.dispose();
+        return result;
+    }
+}

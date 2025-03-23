@@ -1,0 +1,39 @@
+class StringTrim {
+    function String trimSpaces(String line) {
+        return StringTrim.trim(line, 32);
+    }
+
+    function String trim(String line, char c) {
+        var StringBuilder builder;
+        var String result;
+        var int skipPrefix, skipSuffix, i;
+
+        let i = 0;
+        while ((i < line.length()) & (line.charAt(i) = c)) {
+            let i = i + 1;
+        }
+        let skipPrefix = i;
+
+        if (skipPrefix = line.length()) {
+            return String.new(1);
+        }
+
+        let i = line.length();
+        while ((i > 0) & (line.charAt(i - 1) = c)) {
+            let i = i - 1;
+        }
+        let skipSuffix = i;
+
+        let builder = StringBuilder.new(line.length());
+        let i = skipPrefix;
+        while (i < skipSuffix) {
+            do builder.add(line.charAt(i));
+            let i = i + 1;
+        }
+
+        let result = builder.build();
+        do builder.dispose();
+
+        return result;
+    }
+}

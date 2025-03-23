@@ -11,7 +11,7 @@ class ContentBuffer {
 
         while (content.getSize() > 0) {
             let line = content.remove();
-            do content.dispose();
+            do line.dispose();
         }
         do content.dispose();
         do Memory.deAlloc(this);
