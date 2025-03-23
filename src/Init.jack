@@ -17,6 +17,7 @@ class Init {
         do HeadProcesser.init();
         do TailProcesser.init();
         do GrepProcesser.init();
+        do ManProcesser.init();
         return;
     }
 }

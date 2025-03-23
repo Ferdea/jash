@@ -10,6 +10,10 @@ class CatProcesser {
         return;
     }
 
+    function String getName() {
+        return catCommand;
+    }
+
     function bool isCat(ParsedCommand command) {
         if (~(StringComparer.compare(catCommand, command.getName()))) {
             return false;

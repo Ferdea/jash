@@ -10,6 +10,10 @@ class GrepProcesser {
         return;
     }
 
+    function String getName() {
+        return grepCommand;
+    }
+
     function bool isGrep(ParsedCommand command) {
         if (~(StringComparer.compare(grepCommand, command.getName()))) {
             return false;

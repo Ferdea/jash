@@ -8,6 +8,10 @@ class WcProcesser {
         return;
     }
 
+    function String getName() {
+        return wcCommand;
+    }
+
     function bool isWc(ParsedCommand command) {
         if (~(StringComparer.compare(wcCommand, command.getName()))) {
             return false;

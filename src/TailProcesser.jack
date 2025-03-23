@@ -10,6 +10,10 @@ class TailProcesser {
         return;
     }
 
+    function String getName() {
+        return tailCommand;
+    }
+
     function bool isTail(ParsedCommand command) {
         if (~(StringComparer.compare(tailCommand, command.getName()))) {
             return false;

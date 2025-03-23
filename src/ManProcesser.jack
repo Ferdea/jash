@@ -1,0 +1,124 @@
+class ManProcesser {
+    static String manCommand;
+    static String unknownCommandMessage;
+
+    static String lsManMessage;
+    static String mkdirManMessage;
+    static String cdManMessage;
+    static String rmManMessage;
+    static String touchManMessage;
+    static String clearManMessage;
+    static String catManMessage;
+    static String echoManMessage;
+    static String wcManMessage;
+    static String exitManMessage;
+    static String headManMessage;
+    static String tailManMessage;
+    static String grepManMessage;
+    static String manManMessage;
+
+    function void init() {
+        let manCommand = "MAN";
+        let unknownCommandMessage = "UNKNOWN COMMAND";
+
+        let lsManMessage = "LS - LIST DIRECTORY CONTENTS";
+        let mkdirManMessage = "MKDIR [DIRECTORY] - MAKE DIRECTORIES";
+        let cdManMessage = "CD [DIRECTORY] - CHANGE DIRECTORY";
+        let rmManMessage = "RM [FILE/DIRECTORY] - REMOVE FILES OR DIRECTORIES";
+        let touchManMessage = "TOUCH [FILE] - CHANGE FILE TIMESTAMPS";
+        let clearManMessage = "CLEAR - CLEAR THE TERMINAL SCREEN";
+        let catManMessage = "CAT [FILE] - CONCATENATE FILES AND PRINT ON THE STANDART OUTPUT";
+        let echoManMessage = "ECHO [STRING] - DISPLAY A LINE OF TEXT";
+        let wcManMessage = "WC [FILE] - PRINT NEWLINE COUNTS FOR FILE";
+        let exitManMessage = "EXIT - EXIT THE SHELL";
+        let headManMessage = "HEAD [LINES] [FILE] - OUTPUT THE FIRST PART OF LINES";
+        let tailManMessage = "TAIL [LINES] [FILE] - OUTPUT THE LAST PART OF LINES";
+        let grepManMessage = "GREP [PATTERN] [FILE] - PRINT LINES THAT MATCH PATTERN";
+        let manManMessage = "MAN [COMMAND] - AN INTERFACE TO THE SYSTEM REFERENCE MANUALS";
+
+        return;
+    }
+
+    function String getName() {
+        return manCommand;
+    }
+
+    function bool isMan(ParsedCommand command) {
+        if (~(StringComparer.compare(manCommand, command.getName()))) {
+            return false;
+        }
+
+        if (~(command.getArgumentsCount() = 1)) {
+            do JashErrors.incorrectArgumentsCount();
+            return false;
+        }
+
+        return true;
+    }
+
+    function ContentBuffer process(String command) {
+        var ContentBuffer result;
+        let result = ContentBuffer.new();
+
+        if (StringComparer.compare(LsProcesser.getName(), command)) {
+            do result.add(StringCopy.copy(lsManMessage));
+            return result;
+        }
+        if (StringComparer.compare(MkdirProcesser.getName(), command)) {
+            do result.add(StringCopy.copy(mkdirManMessage));
+            return result;
+        }
+        if (StringComparer.compare(CdProcesser.getName(), command)) {
+            do result.add(StringCopy.copy(cdManMessage));
+            return result;
+        }
+        if (StringComparer.compare(RmProcesser.getName(), command)) {
+            do result.add(StringCopy.copy(rmManMessage));
+            return result;
+        }
+        if (StringComparer.compare(TouchProcesser.getName(), command)) {
+            do result.add(StringCopy.copy(touchManMessage));
+            return result;
+        }
+        if (StringComparer.compare(ClearProcesser.getName(), command)) {
+            do result.add(StringCopy.copy(clearManMessage));
+            return result;
+        }
+        if (StringComparer.compare(CatProcesser.getName(), command)) {
+            do result.add(StringCopy.copy(catManMessage));
+            return result;
+        }
+        if (StringComparer.compare(EchoProcesser.getName(), command)) {
+            do result.add(StringCopy.copy(echoManMessage));
+            return result;
+        }
+        if (StringComparer.compare(WcProcesser.getName(), command)) {
+            do result.add(StringCopy.copy(wcManMessage));
+            return result;
+        }
+        if (StringComparer.compare(ExitProcesser.getName(), command)) {
+            do result.add(StringCopy.copy(exitManMessage));
+            return result;
+        }
+        if (StringComparer.compare(HeadProcesser.getName(), command)) {
+            do result.add(StringCopy.copy(headManMessage));
+            return result;
+        }
+        if (StringComparer.compare(TailProcesser.getName(), command)) {
+            do result.add(StringCopy.copy(tailManMessage));
+            return result;
+        }
+        if (StringComparer.compare(GrepProcesser.getName(), command)) {
+            do result.add(StringCopy.copy(grepManMessage));
+            return result;
+        }
+        if (StringComparer.compare(ManProcesser.getName(), command)) {
+            do result.add(StringCopy.copy(manManMessage));
+            return result;
+        }
+
+        do Output.printString(unknownCommandMessage);
+        do Output.println();
+        return result;
+    }
+}

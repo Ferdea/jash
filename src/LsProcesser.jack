@@ -8,6 +8,10 @@ class LsProcesser {
         return;
     }
 
+    function String getName() {
+        return lsCommand;
+    }
+
     function bool isLs(ParsedCommand command) {
         if (~(StringComparer.compare(lsCommand, command.getName()))) { 
             return false;

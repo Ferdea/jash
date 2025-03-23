@@ -6,6 +6,10 @@ class EchoProcesser {
         return;
     }
 
+    function String getName() {
+        return echoCommand;
+    }
+
     function bool isEcho(ParsedCommand command) {
         if (~(StringComparer.compare(echoCommand, command.getName()))) {
             return false;

@@ -6,6 +6,10 @@ class ClearProcesser {
         return;
     }
 
+    function String getName() {
+        return clearCommand;
+    }
+
     function bool isClear(ParsedCommand command) {
         if (~(StringComparer.compare(clearCommand, command.getName()))) {
             return false;

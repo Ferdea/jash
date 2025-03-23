@@ -8,6 +8,10 @@ class MkdirProcesser {
         return;
     }
 
+    function String getName() {
+        return mkdirCommand;
+    }
+
     function bool isMkdir(ParsedCommand command) {
         if (~(StringComparer.compare(mkdirCommand, command.getName()))) {
             return false;

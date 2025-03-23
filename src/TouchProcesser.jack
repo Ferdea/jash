@@ -8,6 +8,10 @@ class TouchProcesser {
         return;
     }
 
+    function String getName() {
+        return touchCommand;
+    }
+
     function bool isTouch(ParsedCommand command) {
         if (~(StringComparer.compare(touchCommand, command.getName()))) {
             return false;

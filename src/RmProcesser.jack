@@ -8,6 +8,10 @@ class RmProcesser {
         return;
     }
 
+    function String getName() {
+        return rmCommand;
+    }
+
     function bool isRm(ParsedCommand command) {
         if (~(StringComparer.compare(rmCommand, command.getName()))) {
             return false;

@@ -12,6 +12,10 @@ class CdProcesser {
         return;
     }
 
+    function String getName() {
+        return cdCommand;
+    }
+
     function bool isCd(ParsedCommand command) {
         if (~(StringComparer.compare(cdCommand, command.getName()))) {
             return false;
@@ -47,7 +51,7 @@ class CdProcesser {
         let directoryIndex = currentDirectory.directoryByName(directoryName);
         let directory = currentDirectory.directoryAt(directoryIndex);
         do state.setCurrentDirectory(directory);
-        
+
         return ContentBuffer.new();
     }
 }

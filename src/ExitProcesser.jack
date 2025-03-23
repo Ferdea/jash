@@ -6,6 +6,10 @@ class ExitProcesser {
         return;
     }
 
+    function String getName() {
+        return exitCommand;
+    }
+
     function bool isExit(ParsedCommand command) {
         if (~(StringComparer.compare(exitCommand, command.getName()))) {
             return false;

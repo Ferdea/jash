@@ -147,6 +147,9 @@ class Jash {
         if (GrepProcesser.isGrep(command)) {
             return GrepProcesser.process(state, command.argumentAt(0), command.argumentAt(1));
         }
+        if (ManProcesser.isMan(command)) {
+            return ManProcesser.process(command.argumentAt(0));
+        }
 
         return null;
     }
