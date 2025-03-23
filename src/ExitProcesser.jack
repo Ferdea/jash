@@ -1,0 +1,26 @@
+class ExitProcesser {
+    static String exitCommand;
+
+    function void init() {
+        let exitCommand = "EXIT";
+        return;
+    }
+
+    function bool isExit(ParsedCommand command) {
+        if (~(StringComparer.compare(exitCommand, command.getName()))) {
+            return false;
+        }
+
+        if (~(command.getArgumentsCount() = 0)) {
+            do JashErrors.incorrectArgumentsCount();
+            return false;
+        }
+
+        return true;
+    }
+
+    function ContentBuffer process() {
+        do Sys.halt();
+        return null;
+    }
+}

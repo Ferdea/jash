@@ -1,0 +1,66 @@
+class TailProcesser {
+    static String tailCommand;
+    static String notFoundFileMessage;
+    static String fileIsEmptyMessage;
+
+    function void init() {
+        let tailCommand = "TAIL";
+        let notFoundFileMessage = "FILE NOT FOUND";
+        let fileIsEmptyMessage = "FILE IS EMPTY";
+        return;
+    }
+
+    function bool isTail(ParsedCommand command) {
+        if (~(StringComparer.compare(tailCommand, command.getName()))) {
+            return false;
+        }
+
+        if (~(command.getArgumentsCount() = 2)) {
+            do JashErrors.incorrectArgumentsCount();
+            return false;
+        }
+
+        return true;
+    }
+
+    function ContentBuffer process(JashState state, String takeString, String filename) {
+        var int i, contentSize, fileIndex, take;
+        var Directory currentDirectory;
+        var ContentBuffer result;
+        var File file;
+        var String line;
+
+        let currentDirectory = state.getCurrentDirectory();
+        let fileIndex = currentDirectory.fileByName(filename);
+
+        if (fileIndex = -1) {
+            do Output.printString(notFoundFileMessage);
+            do Output.println();
+            return ContentBuffer.new();
+        }
+
+        let file = currentDirectory.fileAt(fileIndex);
+
+        let contentSize = file.getContentSize();
+        if (contentSize = 0) {
+            do Output.printString(fileIsEmptyMessage);
+            do Output.println();
+            return ContentBuffer.new();
+        }
+        
+        let take = takeString.intValue();
+        if (take < 0) {
+            let take = take + contentSize;
+        }
+        let take = contentSize - take;
+
+        let result = ContentBuffer.new();
+        let i = take;
+        while (i < contentSize) {
+            let line = file.lineAt(i);
+            do result.add(StringCopy.copy(line));
+            let i = i + 1;
+        }
+        return result;
+    }
+}

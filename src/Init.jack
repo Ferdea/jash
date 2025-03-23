@@ -13,6 +13,10 @@ class Init {
         do EchoProcesser.init();
         do CommandParser.init();
         do WcProcesser.init();
+        do ExitProcesser.init();
+        do HeadProcesser.init();
+        do TailProcesser.init();
+        do GrepProcesser.init();
         return;
     }
 }

@@ -135,6 +135,18 @@ class Jash {
         if (WcProcesser.isWc(command)) {
             return WcProcesser.process(state, command.argumentAt(0));
         }
+        if (ExitProcesser.isExit(command)) {
+            return ExitProcesser.process();
+        }
+        if (HeadProcesser.isHead(command)) {
+            return HeadProcesser.process(state, command.argumentAt(0), command.argumentAt(1));
+        }
+        if (TailProcesser.isTail(command)) {
+            return TailProcesser.process(state, command.argumentAt(0), command.argumentAt(1));
+        }
+        if (GrepProcesser.isGrep(command)) {
+            return GrepProcesser.process(state, command.argumentAt(0), command.argumentAt(1));
+        }
 
         return null;
     }

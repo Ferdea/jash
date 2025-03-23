@@ -1,0 +1,64 @@
+class GrepProcesser {
+    static String grepCommand;
+    static String notFoundFileMessage;
+    static String fileIsEmptyMessage;
+
+    function void init() {
+        let grepCommand = "GREP";
+        let notFoundFileMessage = "FILE NOT FOUND";
+        let fileIsEmptyMessage = "FILE IS EMPTY";
+        return;
+    }
+
+    function bool isGrep(ParsedCommand command) {
+        if (~(StringComparer.compare(grepCommand, command.getName()))) {
+            return false;
+        }
+
+        if (~(command.getArgumentsCount() = 2)) {
+            do JashErrors.incorrectArgumentsCount();
+            return false;
+        }
+
+        return true;
+    }
+
+    function ContentBuffer process(JashState state, String pattern, String filename) {
+        var int i, contentSize, fileIndex, take;
+        var Directory currentDirectory;
+        var ContentBuffer result;
+        var File file;
+        var String line;
+
+        let currentDirectory = state.getCurrentDirectory();
+        let fileIndex = currentDirectory.fileByName(filename);
+
+        if (fileIndex = -1) {
+            do Output.printString(notFoundFileMessage);
+            do Output.println();
+            return ContentBuffer.new();
+        }
+
+        let file = currentDirectory.fileAt(fileIndex);
+
+        let contentSize = file.getContentSize();
+          if (contentSize = 0) {
+            do Output.printString(fileIsEmptyMessage);
+            do Output.println();
+            return ContentBuffer.new();
+        }
+
+        let result = ContentBuffer.new();
+        let i = 0;
+        while (i < contentSize) {
+            let line = file.lineAt(i);
+
+            if (StringPattern.isMatch(line, pattern)) {
+                do result.add(StringCopy.copy(line));
+            }
+            
+            let i = i + 1;
+        }
+        return result;
+    }
+}

@@ -1,0 +1,27 @@
+class StringPattern {
+    function bool isMatch(String source, String pattern) {
+        var int i, j;
+        var bool match;
+
+        let i = 0;
+        while (~((i + pattern.length()) > source.length())) {
+            let j = 0;
+            let match = true;
+            while (match & (j < pattern.length())) {
+                if (~(source.charAt(i + j) = pattern.charAt(j))) {
+                    let match = false;
+                }
+
+                let j = j + 1;
+            }
+
+            if (match) {
+                return true;
+            }
+
+            let i = i + 1;
+        }
+
+        return false;
+    }
+}
