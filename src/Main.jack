@@ -1,10 +1,42 @@
 class Main {
     function void main() {
         var Jash jash;
+        var JashState initialState;
+
         do Init.init();
-        let jash = Jash.new();
+
+        let initialState = Main.prepareFiles();
+        let jash = Jash.new(initialState);
         do jash.run();
+
         do jash.dispose();
         return;
+    }
+
+    function JashState prepareFiles() {
+        var JashState initial;
+        var Directory root, directory;
+        var File file;
+
+        let initial = JashState.new();
+        let root = initial.getRootDirectory();
+
+        let directory = Directory.new("TEST", root);
+        do root.pushDirectory(directory);
+
+        let file = File.new("TEST_FILE", directory);
+        do file.store("NAME=VITYA");
+        do file.store("NAME=VANYA");
+        do file.store("JOB=DRIVER");
+        do file.store("NAME=SASHA");
+        do file.store("NAME=LENA");
+        do file.store("JOB=PROGRAMMER");
+        do file.store("NAME=LENYA");
+        do file.store("NAME=MASHA");
+        do file.store("NAME=KIRILL");
+        do file.store("JOB=TEACHER");
+        do directory.pushFile(file);
+
+        return initial;
     }
 }

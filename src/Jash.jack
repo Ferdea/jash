@@ -10,9 +10,15 @@ class Jash {
         return;
     }
 
-    constructor Jash new() {
-        let state = JashState.new();
+    constructor Jash new(JashState stateArg) {
+        let state = stateArg;
         return this;
+    }
+
+    function Jash newEmpty() {
+        var Jash result;
+        let result = Jash.new(JashState.new());
+        return result;
     }
 
     method void dispose() {
